@@ -1,0 +1,264 @@
+#pgzero
+import random
+
+cell = Actor('0')
+cell1 = Actor("1")
+cell2 = Actor("2")
+cell3 = Actor("3")
+cell4 = Actor("4")
+cell5 = Actor("5")
+cell6 = Actor("6")
+cell7 = Actor("7")
+cell8 = Actor("8")
+cell9 = Actor("9")
+cell10 = Actor("10")
+cell11 = Actor("11")
+cell12 = Actor("12")
+size_w = 9
+size_h = 10
+WIDTH = cell.width * size_w
+HEIGHT = cell.height * size_h
+
+mode = "menu"
+
+TITLE = "The dungeon of the monsters"
+FPS = 30
+game_map = [[1, 11, 12, 11, 12, 11, 12, 11, 10], 
+          [2, 0, 0, 0, 0, 0, 0, 0, 8], 
+          [3, 0, 0, 0, 0, 0, 0, 0, 9], 
+          [2, 0, 0, 0, 0, 0, 0, 0, 8], 
+          [3, 0, 0, 0, 0, 0, 0, 0, 9], 
+          [2, 0, 0, 0, 0, 0, 0, 0, 8], 
+          [3, 0, 0, 0, 0, 0, 0, 0, 9], 
+          [2, 0, 0, 0, 0, 0, 0, 0, 8], 
+          [4, 5, 6, 5, 6, 5, 6, 5, 7]]
+
+# Main character
+main_character = Actor("Idle")
+main_character.top = 16
+main_character.left = 16
+main_character.health = 50
+main_character.attack = 5
+
+# Monsters
+a = random.randint(1, 7)
+monsters = []
+for i in range(a):
+    x = random.randint(1, 7) * cell.width
+    y = random.randint(1, 7) * cell.height
+    monster = Actor("monster", topleft = (x, y))
+    monster.health = random.randint(10, 20)
+    monster.attack = random.randint(5, 10)
+    monster.bonus = random.randint(0, 2)
+    monster.speed = random.randint(1, 3)
+    monsters.append(monster)
+    
+def move_monsters():
+    for monster in monsters:
+        if monster.x > -20:
+            monster.x -= monster.speed
+        else:
+            monster.x = WIDTH + 20
+            monster.y = random.randint(30, 120)
+    
+# Obiekty
+magics = []
+heal = []
+power_ups = []
+Menu_background = Actor("Background")
+Game_over = Actor("Gameover")
+Title = Actor("Button", (48, 8))
+Button = Actor("Button", (48, 65))
+Cleared = Actor("Cleared")
+
+
+def map_draw():
+    for i in range(len(game_map)):
+        for j in range(len(game_map[0])):
+            if game_map[i][j] == 0:
+                cell.left = cell.width*j
+                cell.top = cell.height*i
+                cell.draw()
+            elif game_map[i][j] == 1:
+                cell1.left = cell.width*j
+                cell1.top = cell.height*i
+                cell1.draw()
+            elif game_map[i][j] == 2:
+                cell2.left = cell.width*j
+                cell2.top = cell.height*i
+                cell2.draw()  
+            elif game_map[i][j] == 3:
+                cell3.left = cell.width*j
+                cell3.top = cell.height*i
+                cell3.draw()
+            elif game_map[i][j] == 4:
+                cell4.left = cell.width*j
+                cell4.top = cell.height*i
+                cell4.draw()
+            elif game_map[i][j] == 5:
+                cell5.left = cell.width*j
+                cell5.top = cell.height*i
+                cell5.draw()  
+            elif game_map[i][j] == 6:
+                cell6.left = cell.width*j
+                cell6.top = cell.height*i
+                cell6.draw()
+            elif game_map[i][j] == 7:
+                cell7.left = cell.width*j
+                cell7.top = cell.height*i
+                cell7.draw()
+            elif game_map[i][j] == 8:
+                cell8.left = cell.width*j
+                cell8.top = cell.height*i
+                cell8.draw()  
+            elif game_map[i][j] == 9:
+                cell9.left = cell.width*j
+                cell9.top = cell.height*i
+                cell9.draw()
+            elif game_map[i][j] == 10:
+                cell10.left = cell.width*j
+                cell10.top = cell.height*i
+                cell10.draw()
+            elif game_map[i][j] == 11:
+                cell11.left = cell.width*j
+                cell11.top = cell.height*i
+                cell11.draw()  
+            elif game_map[i][j] == 12:
+                cell12.left = cell.width*j
+                cell12.top = cell.height*i
+                cell12.draw()
+                
+def draw():
+    if mode == "menu":
+        Menu_background.draw()
+        Title.draw()
+        screen.draw.text("The dungeon of", center=(48, 5), color = 'white', fontsize = 9)
+        screen.draw.text("the monsters", center=(48, 14), color = 'white', fontsize = 9)
+        Button.draw()
+        screen.draw.text("Play", center=(48, 67), color = 'white', fontsize = 15)
+        
+    elif mode == "game":
+        screen.fill("#2f3542")
+        map_draw()
+        main_character.draw()
+        screen.draw.text("HP:", center=(70, 150), color = 'white', fontsize = 10)
+        screen.draw.text(str(main_character.health), center=(90, 150), color='white', fontsize=10)
+        screen.draw.text("DMG:", center=(120, 150), color = 'white', fontsize = 10)
+        screen.draw.text(str(main_character.attack), center=(140, 150), color='white', fontsize=10)
+        for i in range(len(monsters)):
+            monsters[i].draw()
+        for i in range(len(heal)):
+            heal[i].draw()
+        for i in range(len(power_ups)):
+            power_ups[i].draw()
+        for i in range(len(magics)):
+            magics[i].draw()
+            
+    elif mode == "game_over":
+        screen.clear()  # Ta linijka wyczyści ekran
+        Game_over.draw()
+        Button.draw()
+        screen.draw.text("Restart", center=(48, 65), color = 'white', fontsize = 15)
+    elif mode == "Cleared":
+        screen.clear()
+        Cleared.draw()
+        Button.draw()
+        screen.draw.text("Restart", center=(48, 65), color = 'white', fontsize = 15)
+
+def victory():
+    global mode, win
+    if monsters == [] and main_character.health > 0:
+        mode = "Cleared"
+        
+def update(dt):
+    global mode
+    if mode == "game":  # Sprawdzamy tylko, jeśli tryb to 'game'
+        for i in range(len(magics)):
+            if magics[i].x < 0:
+                magics.pop(i)
+                break
+            else:
+                magics[i].x += 10
+                
+        move_monsters()
+        
+        for magic in magics:
+            for monster in monsters:
+                if magic.colliderect(monster):
+                    monster.health -= main_character.attack
+                    magics.remove(magic)
+                    if monster.health <= 0:
+                        monsters.remove(monster)
+                    break
+                
+        for monster in monsters:
+            if main_character.colliderect(monster):
+                main_character.health -= monster.attack
+
+        # Przełącz tryb gry, jeśli zdrowie spadnie poniżej lub równe zero
+        if main_character.health <= 0:
+            main_character.health = 0  # Zatrzymujemy zdrowie na 0
+            mode = "game_over"
+            
+        victory()
+
+def on_key_down(key):
+    old_x = main_character.x
+    old_y = main_character.y
+    if keyboard.d and main_character.x + cell.width < WIDTH - cell.width:
+        main_character.x += cell.width
+        main_character.image = 'Idle'
+    elif keyboard.a and main_character.x - cell.width > cell.width:
+        main_character.x -= cell.width
+        main_character.image = 'left'
+    elif keyboard.s and main_character.y + cell.height < HEIGHT - cell.height*2:
+        main_character.y += cell.height
+    elif keyboard.w and main_character.y - cell.height > cell.height:
+        main_character.y -= cell.height
+    if keyboard.space:
+        main_character.image = 'Idle'
+        magic = Actor("Soul attack")
+        magic.pos = main_character.pos
+        magics.append(magic)
+        
+def on_mouse_down(button, pos):
+    global mode, monsters, magics, heal, power_ups
+
+    if Button.collidepoint(pos):
+        if mode == 'menu':
+            mode = 'game'
+        
+        elif mode == 'game_over':
+            # Resetowanie stanu gry
+            mode = 'game'
+            reset_game()
+        elif mode == 'Cleared':  # Restart w trybie Cleared
+            mode = 'game'
+            reset_game()
+            
+def reset_game():
+    global main_character, monsters, magics, heal, power_ups
+
+    # Resetowanie statystyk bohatera
+    main_character.health = 50
+    main_character.attack = 5
+    main_character.x = cell.width  # Powrót na początkową pozycję X
+    main_character.y = cell.height # Powrót na początkową pozycję Y
+
+    # Resetowanie przeciwników i obiektów
+    monsters = []
+    magics = []
+    heal = []
+    power_ups = []
+
+    # Tworzenie nowych przeciwników
+    a = random.randint(1, 7)
+    for i in range(a):
+        x = random.randint(1, 7) * cell.width
+        y = random.randint(1, 7) * cell.height
+        monster = Actor("monster", topleft=(x, y))
+        monster.health = random.randint(10, 20)
+        monster.attack = random.randint(5, 10)
+        monster.bonus = random.randint(0, 2)
+        monster.speed = random.randint(1, 3)
+        monsters.append(monster)
